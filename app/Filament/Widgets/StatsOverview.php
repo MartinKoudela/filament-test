@@ -2,9 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Post;
-use App\Models\User;
-use Carbon\Carbon;
+use App\Models\CartItem;
+use App\Models\Product;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -14,38 +13,29 @@ class StatsOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $usersThisWeek = User::where('created_at', '>=', now()->subWeek())->count();
-        $postsThisWeek = Post::where('created_at', '>=', now()->subWeek())->count();
+        $totalProducts = Product::count();
+        $activeProducts = Product::where('is_active', true)->count();
+        $outOfStock = Product::where('in_stock', false)->count();
+        $avgPrice = Product::avg('price');
+
+        $cartItemsCount = CartItem::sum('quantity');
+        $cartTotalValue = CartItem::with('product')->get()->sum(function ($item) {
+            return ($item->product->discount_price ?? $item->product->price) * $item->quantity;
+        });
 
         return [
-            Stat::make('Total Users', User::count())
-                ->description($usersThisWeek . ' this week')
-                ->descriptionIcon('heroicon-m-user-group')
-                ->color('primary')
-                ->chart($this->getUsersPerDay()),
-            Stat::make('Total Posts', Post::count())
-                ->description($postsThisWeek . ' this week')
-                ->descriptionIcon('heroicon-m-document-text')
-                ->color('success')
-                ->chart($this->getPostsPerDay()),
-            Stat::make('Posts Today', Post::whereDate('created_at', today())->count())
-                ->description('Created today')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
+            Stat::make('Total Products', $totalProducts)
+                ->description($activeProducts . ' active')
+                ->color('primary'),
+            Stat::make('Out of Stock', $outOfStock)
+                ->description('products unavailable')
+                ->color($outOfStock > 0 ? 'danger' : 'success'),
+            Stat::make('Avg Price', number_format($avgPrice, 2) . ' Kč')
+                ->description('across all products')
+                ->color('info'),
+            Stat::make('Items in Carts', $cartItemsCount)
+                ->description(number_format($cartTotalValue, 2) . ' Kč total value')
                 ->color('warning'),
         ];
-    }
-
-    private function getUsersPerDay(): array
-    {
-        return collect(range(6, 0))->map(function ($days) {
-            return User::whereDate('created_at', now()->subDays($days))->count();
-        })->toArray();
-    }
-
-    private function getPostsPerDay(): array
-    {
-        return collect(range(6, 0))->map(function ($days) {
-            return Post::whereDate('created_at', now()->subDays($days))->count();
-        })->toArray();
     }
 }
