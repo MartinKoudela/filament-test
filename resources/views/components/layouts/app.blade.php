@@ -7,7 +7,7 @@
     <title>{{ $title ?? config('app.name', 'Mini Blog') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet"/>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/product-image.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body
     class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen flex flex-col items-center p-6 lg:p-8 font-sans">

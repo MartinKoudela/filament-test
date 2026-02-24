@@ -72,6 +72,17 @@
                                 </div>
 
                                 @if ($product->in_stock)
+                                    <form action="{{ route('cart.add', $product) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="p-2 rounded-lg bg-[#1b1b18] dark:bg-[#eeeeec] text-white dark:text-[#1C1C1A] hover:bg-black dark:hover:bg-white transition-colors">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if ($product->in_stock)
                                     <span class="text-xs text-green-600 dark:text-green-400">In stock</span>
                                 @else
                                     <span class="text-xs text-red-500">Out of stock</span>

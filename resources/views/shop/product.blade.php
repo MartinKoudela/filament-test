@@ -33,7 +33,8 @@
 
         @if ($otherImages->count())
             <div class="flex gap-2 p-4 overflow-x-auto">
-                <img src="{{ asset('storage/' . $primaryImage->path) }}" alt="{{ $primaryImage->alt ?? $product->name }}"
+                <img src="{{ asset('storage/' . $primaryImage->path) }}"
+                     alt="{{ $primaryImage->alt ?? $product->name }}"
                      onclick="document.getElementById('main-image').src = this.src"
                      class="w-20 h-20 rounded-lg object-cover shrink-0 border-2 border-transparent hover:border-[#f53003] transition-colors cursor-pointer"
                      id="secondary-image">
@@ -128,11 +129,13 @@
                     </div>
                 </div>
             @endif
-
-            <button
-                class="w-full px-6 py-3 bg-[#1b1b18] dark:bg-[#eeeeec] text-white dark:text-[#1C1C1A] rounded-xl text-sm font-medium hover:bg-black dark:hover:bg-white transition-colors {{ !$product->in_stock ? 'opacity-50 cursor-not-allowed' : '' }}" {{ !$product->in_stock ? 'disabled' : '' }}>
-                {{ $product->in_stock ? 'Add to cart' : 'Out of stock' }}
-            </button>
+            <form action="{{ route('cart.add', $product) }}" method="POST">
+                @csrf
+                <button type="submit"
+                        class="w-full px-6 py-3 bg-[#1b1b18] dark:bg-[#eeeeec] text-white dark:text-[#1C1C1A] rounded-xl text-sm font-medium hover:bg-black dark:hover:bg-white transition-colors {{ !$product->in_stock ? 'opacity-50 cursor-not-allowed' : '' }}" {{ !$product->in_stock ? 'disabled' : '' }}>
+                    {{ $product->in_stock ? 'Add to cart' : 'Out of stock' }}
+                </button>
+            </form>
         </div>
     </article>
 
